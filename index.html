@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI星詠みパーソナル鑑定 - 天命の羅針盤</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #070913;
+      --bg-card: rgba(18, 24, 48, 0.78);
+      --gold: #e6c373;
+      --gold-dim: rgba(230, 195, 115, 0.35);
+      --indigo-accent: #6366f1;
+      --text-main: #f3f4f8;
+      --text-sub: #a3acc4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      line-height: 1.65;
+    }
+
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .asanoha-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.06;
+      background-image: radial-gradient(circle at 50% 0%, #818cf8 0%, transparent 65%),
+        repeating-linear-gradient(60deg, var(--gold) 0, var(--gold) 1px, transparent 1px, transparent 28px),
+        repeating-linear-gradient(-60deg, var(--gold) 0, var(--gold) 1px, transparent 1px, transparent 28px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 28px 16px 64px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .subtitle-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.16em;
+      color: var(--gold);
+      border: 1px solid var(--gold-dim);
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+      background: rgba(230, 195, 115, 0.08);
+    }
+
+    h1 {
+      font-family: 'Shippori Mincho', serif;
+      font-size: clamp(1.55rem, 5vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #fff6d6 0%, var(--gold) 55%, #b88c3a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--gold-dim);
+      border-radius: 20px;
+      padding: 24px 20px;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .quick-date-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .pill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill-btn {
+      flex: 1 1 auto;
+      min-width: 64px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(10, 14, 30, 0.65);
+      color: var(--text-sub);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--gold-dim);
+      color: var(--text-main);
+    }
+
+    .pill-btn.active {
+      background: linear-gradient(135deg, rgba(230, 195, 115, 0.24), rgba(99, 102, 241, 0.25));
+      border-color: var(--gold);
+      color: #fff8e7;
+      font-weight: 700;
+      box-shadow: 0 0 14px rgba(230, 195, 115, 0.22);
+    }
+
+    .select-row-3 {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    select, input[type="date"] {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(10, 14, 30, 0.85);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input[type="date"]:focus {
+      border-color: var(--gold);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #d4af37 0%, #f3d78c 50%, #c59b27 100%);
+      color: #141108;
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.35);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      margin-top: 6px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(212, 175, 55, 0.5);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Loading */
+    .loading-box {
+      display: none;
+      text-align: center;
+      padding: 36px 20px;
+    }
+
+    .spinner-ring {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      border: 3px solid rgba(230, 195, 115, 0.15);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Result Section */
+    #resultSection {
+      display: none;
+      animation: fadeUp 0.55s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      text-align: center;
+      border-bottom: 1px solid var(--gold-dim);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .result-date-tag {
+      font-size: 0.8rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    .result-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 1.35rem;
+      color: #fff;
+      margin-top: 4px;
+    }
+
+    .fortune-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .fortune-item {
+      background: rgba(10, 14, 30, 0.65);
+      border: 1px solid rgba(230, 195, 115, 0.22);
+      border-radius: 14px;
+      padding: 15px 16px;
+    }
+
+    .fortune-item-label {
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fortune-item-value {
+      font-size: 0.96rem;
+      color: var(--text-main);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .color-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-swatch {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .compass-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .compass-dial {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+      background: rgba(230, 195, 115, 0.08);
+    }
+
+    .compass-needle {
+      width: 4px;
+      height: 22px;
+      background: linear-gradient(to bottom, #f87171 50%, #e2e8f0 50%);
+      border-radius: 2px;
+      transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .secondary-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--gold-dim);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(230, 195, 115, 0.14);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1e293b;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      z-index: 99;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div class="asanoha-overlay"></div>
+
+  <div class="container">
+    <header>
+      <div class="subtitle-badge">CELESTIAL AI ORACLE</div>
+      <h1>AI星詠みパーソナル鑑定</h1>
+      <p>星巡りと属性から導く、あなただけの開運羅針盤</p>
+    </header>
+
+    <main class="glass-card" id="formCard">
+      <!-- 1. 占って欲しい日にち -->
+      <div class="form-group">
+        <label class="form-label">✦ 占って欲しい日にち</label>
+        <div class="quick-date-row" id="quickDateGroup">
+          <button type="button" class="pill-btn active" data-offset="0">今日</button>
+          <button type="button" class="pill-btn" data-offset="1">明日</button>
+          <button type="button" class="pill-btn" data-offset="2">明後日</button>
+        </div>
+        <input type="date" id="targetDate" />
+      </div>
+
+      <!-- 2. 生年月日 -->
+      <div class="form-group">
+        <label class="form-label">✦ 生年月日</label>
+        <div class="select-row-3">
+          <select id="birthYear" aria-label="生まれ年"></select>
+          <select id="birthMonth" aria-label="生まれ月"></select>
+          <select id="birthDay" aria-label="生まれ日"></select>
+        </div>
+      </div>
+
+      <!-- 3. 血液型 -->
+      <div class="form-group">
+        <label class="form-label">✦ 血液型</label>
+        <div class="pill-grid" id="bloodGroup">
+          <button type="button" class="pill-btn active" data-val="A型">A型</button>
+          <button type="button" class="pill-btn" data-val="B型">B型</button>
+          <button type="button" class="pill-btn" data-val="O型">O型</button>
+          <button type="button" class="pill-btn" data-val="AB型">AB型</button>
+          <button type="button" class="pill-btn" data-val="不明">不明</button>
+        </div>
+      </div>
+
+      <!-- 4. 性別 -->
+      <div class="form-group">
+        <label class="form-label">✦ 性別</label>
+        <div class="pill-grid" id="genderGroup">
+          <button type="button" class="pill-btn active" data-val="女性">女性</button>
+          <button type="button" class="pill-btn" data-val="男性">男性</button>
+          <button type="button" class="pill-btn" data-val="その他・回答しない">その他</button>
+        </div>
+      </div>
+
+      <!-- 5. 職業 -->
+      <div class="form-group">
+        <label class="form-label">✦ 職業</label>
+        <select id="occupation">
+          <option value="会社員（事務・企画・管理）">会社員（事務・企画・管理）</option>
+          <option value="営業・販売・接客サービス">営業・販売・接客サービス</option>
+          <option value="IT・エンジニア・Web関連">IT・エンジニア・Web関連</option>
+          <option value="クリエイティブ・デザイン・表現職">クリエイティブ・デザイン・表現職</option>
+          <option value="医療・福祉・介護">医療・福祉・介護</option>
+          <option value="教育・保育・研究">教育・保育・研究</option>
+          <option value="建設・現場技術・職人・一人親方">建設・現場技術・職人・一人親方</option>
+          <option value="経営者・自営業・フリーランス">経営者・自営業・フリーランス</option>
+          <option value="公務員・団体職員">公務員・団体職員</option>
+          <option value="主婦・主夫・家事育児">主婦・主夫・家事育児</option>
+          <option value="学生">学生</option>
+          <option value="その他・求職中">その他・求職中</option>
+        </select>
+      </div>
+
+      <!-- 6. 生まれた時間 -->
+      <div class="form-group">
+        <label class="form-label">✦ 生まれた時間</label>
+        <div class="pill-grid" id="birthTimeGroup">
+          <button type="button" class="pill-btn active" data-val="AM（午前）">AM（午前）</button>
+          <button type="button" class="pill-btn" data-val="PM（午後）">PM（午後）</button>
+          <button type="button" class="pill-btn" data-val="不明">不明</button>
+        </div>
+      </div>
+
+      <button type="button" class="submit-btn" id="analyzeBtn">✦ 星の導きを解析する ✦</button>
+    </main>
+
+    <!-- ローディング -->
+    <div class="glass-card loading-box" id="loadingBox">
+      <div class="spinner-ring"></div>
+      <p style="color: var(--gold); font-weight: 700;">星位と命式を解析しています…</p>
+      <p style="font-size: 0.82rem; color: var(--text-sub); margin-top: 6px;">あなたの属性に合わせた開運メッセージを紡いでいます</p>
+    </div>
+
+    <!-- 鑑定結果 -->
+    <section class="glass-card" id="resultSection">
+      <div class="result-header">
+        <div class="result-date-tag" id="resDateLabel"></div>
+        <h2 class="result-title">本日の星詠み鑑定書</h2>
+      </div>
+
+      <div class="fortune-grid">
+        <div class="fortune-item">
+          <div class="fortune-item-label">💼 職業に関連したひと言アドバイス</div>
+          <div class="fortune-item-value" id="resWork"></div>
+        </div>
+
+        <div class="fortune-item">
+          <div class="fortune-item-label">🍽️ 運気のあがる食べ物</div>
+          <div class="fortune-item-value" id="resFood"></div>
+        </div>
+
+        <div class="two-col">
+          <div class="fortune-item">
+            <div class="fortune-item-label">🎨 ラッキーカラー</div>
+            <div class="color-display">
+              <div class="color-swatch" id="resColorSwatch"></div>
+              <div class="fortune-item-value" id="resColor"></div>
+            </div>
+          </div>
+
+          <div class="fortune-item">
+            <div class="fortune-item-label">🧭 ラッキー方角</div>
+            <div class="compass-display">
+              <div class="compass-dial">
+                <div class="compass-needle" id="compassNeedle"></div>
+              </div>
+              <div class="fortune-item-value" id="resDirection"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fortune-item">
+          <div class="fortune-item-label">🌱 一日一膳（一善）アドバイス</div>
+          <div class="fortune-item-value" id="resGoodDeed"></div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button type="button" class="secondary-btn" id="copyBtn">📋 結果をコピー</button>
+        <button type="button" class="secondary-btn" id="resetBtn">🔄 条件を変えて再鑑定</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">鑑定結果をコピーしました</div>
+
+  <script>
+    // 星空アニメーション
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = Array.from({ length: 95 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        alpha: Math.random(),
+        delta: (Math.random() * 0.015 + 0.004) * (Math.random() < 0.5 ? 1 : -1)
+      }));
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const s of stars) {
+        s.alpha += s.delta;
+        if (s.alpha <= 0.1 || s.alpha >= 1) s.delta *= -1;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 248, 225, ${s.alpha})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(animateStars);
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    animateStars();
+
+    // 日付初期化
+    const targetDateInput = document.getElementById('targetDate');
+    function formatDateISO(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function setTargetOffset(days) {
+      const base = new Date();
+      base.setDate(base.getDate() + days);
+      targetDateInput.value = formatDateISO(base);
+    }
+    setTargetOffset(0);
+
+    document.querySelectorAll('#quickDateGroup .pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#quickDateGroup .pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setTargetOffset(Number(btn.dataset.offset));
+      });
+    });
+
+    targetDateInput.addEventListener('change', () => {
+      document.querySelectorAll('#quickDateGroup .pill-btn').forEach(b => b.classList.remove('active'));
+    });
+
+    // 生年月日セレクト生成
+    const yearSel = document.getElementById('birthYear');
+    const monthSel = document.getElementById('birthMonth');
+    const daySel = document.getElementById('birthDay');
+
+    for (let y = 2026; y >= 1945; y--) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = `${y}年`;
+      if (y === 1995) opt.selected = true;
+      yearSel.appendChild(opt);
+    }
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = `${m}月`;
+      if (m === 6) opt.selected = true;
+      monthSel.appendChild(opt);
+    }
+
+    function updateDays() {
+      const y = Number(yearSel.value);
+      const m = Number(monthSel.value);
+      const maxDay = new Date(y, m, 0).getDate();
+      const current = Number(daySel.value) || 15;
+      daySel.innerHTML = '';
+      for (let d = 1; d <= maxDay; d++) {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = `${d}日`;
+        if (d === Math.min(current, maxDay)) opt.selected = true;
+        daySel.appendChild(opt);
+      }
+    }
+    yearSel.addEventListener('change', updateDays);
+    monthSel.addEventListener('change', updateDays);
+    updateDays();
+
+    // ピル選択グループ制御
+    function setupPillGroup(groupId) {
+      const group = document.getElementById(groupId);
+      group.querySelectorAll('.pill-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    }
+    setupPillGroup('bloodGroup');
+    setupPillGroup('genderGroup');
+    setupPillGroup('birthTimeGroup');
+
+    function getSelectedValue(groupId) {
+      const active = document.querySelector(`#${groupId} .pill-btn.active`);
+      return active ? active.dataset.val : '';
+    }
+
+    // 決定論的星詠みロジック（外部APIキー不要でも動作）
+    function generateDeterministicFortune(params) {
+      const seedStr = `${params.targetDate}|${params.birthDate}|${params.blood}|${params.gender}|${params.occupation}|${params.birthTime}`;
+      let hash = 2166136261;
+      for (let i = 0; i < seedStr.length; i++) {
+        hash ^= seedStr.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      const h = Math.abs(hash);
+
+      const workAdvices = {
+        "会社員（事務・企画・管理）": [
+          "細部の確認と段取りの丁寧さが周囲の信頼を一気に高めます。午前中のうちに優先タスクを整理すると流れが整います。",
+          "報連相をいつもより半歩早めに行うことで、思わぬサポートや好条件の話が舞い込みやすい星回りです。"
+        ],
+        "営業・販売・接客サービス": [
+          "相手の言葉を一度受け止めてから提案すると成約率と満足度が大きく伸びます。笑顔の第一声が鍵になります。",
+          "過去のやり取りや小さな好みを思い出したひと言が、相手との距離を縮める強い追い風になります。"
+        ],
+        "IT・エンジニア・Web関連": [
+          "複雑な課題ほど基本設計に立ち返ると突破口が見えます。作業ログやメモを言語化しておくと後の自分を助けます。",
+          "新しいツールや効率化のアイデアを試すのに好適な日。小さな改善が全体の品質を底上げします。"
+        ],
+        "クリエイティブ・デザイン・表現職": [
+          "直感で浮かんだ最初のラフやアイデアにこそ核心が宿っています。余白を恐れず表現すると高く評価されます。",
+          "普段触れないジャンルの作品や色彩からインスピレーションを得られるとき。インプットの時間を少し作ってみて。"
+        ],
+  
