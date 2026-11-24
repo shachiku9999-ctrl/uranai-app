@@ -686,4 +686,151 @@
           "直感で浮かんだ最初のラフやアイデアにこそ核心が宿っています。余白を恐れず表現すると高く評価されます。",
           "普段触れないジャンルの作品や色彩からインスピレーションを得られるとき。インプットの時間を少し作ってみて。"
         ],
-  
+        "医療・福祉・介護": [
+          "あなたの落ち着いた声掛けが現場全体の安心感につながります。合間の水分補給と深呼吸で自分のリズムも守って。",
+          "小さな変化への気づきが大きなトラブルを未然に防ぎます。チーム内の情報共有がスムーズに運ぶ日です。"
+        ],
+        "教育・保育・研究": [
+          "相手のペースに寄り添う姿勢が実を結ぶ日。結論を急がず問いかけを増やすことで、相手自身の気づきを引き出せます。",
+          "準備してきた知識や資料が思わぬ場面で役立ちます。分かりやすい例え話を一つ用意しておくと吉です。"
+        ],
+        "建設・現場技術・職人・一人親方": [
+          "段取りと安全確認の徹底が現場の信頼と仕上がりの美しさに直結します。経験に基づく判断が冴えわたる日です。",
+          "道具や資材のメンテナンス・整理にツキがあります。現場での的確なひと言が周囲の動きをスムーズにします。"
+        ],
+        "経営者・自営業・フリーランス": [
+          "長期的な視点での判断が吉と出る星回り。目先の数字だけでなく、信頼を積み上げる選択が次の利益を連れてきます。",
+          "既存のお客様や取引先へのちょっとした連絡が新しい案件の種になります。自分の強みを明確に打ち出して。"
+        ],
+        "公務員・団体職員": [
+          "公平で誠実な対応が周囲から高く評価されます。前例を踏まえつつも、手続きを分かりやすく案内すると感謝されます。",
+          "書類やデータのダブルチェックが功を奏する日。落ち着いて一つずつ片付けることで定時後の運気も上昇します。"
+        ],
+        "主婦・主夫・家事育児": [
+          "完璧を目指しすぎず「今日はここまで」と区切りをつけることで、家庭内の空気がふっと軽くなります。",
+          "身近な暮らしの小さな工夫が家族の笑顔につながります。自分のためのティータイムも大切な予定に入れて。"
+        ],
+        "学生": [
+          "基礎の復習にツキがある日。分からない箇所をそのままにせず、図や箇条書きに整理すると一気に理解が深まります。",
+          "友人や先生との何気ない会話の中に進路や学びのヒントが隠れています。好奇心の向く方へ一歩踏み出してみて。"
+        ],
+        "その他・求職中": [
+          "これまでの経験や得意なことを紙に書き出すと、次のステージへの明確な軸が見えてきます。焦らず整える時期です。",
+          "新しい情報やご縁が入りやすい運気。普段と違う時間帯に散歩や情報収集をすると良い発見があります。"
+        ]
+      };
+
+      const foods = [
+        "出汁の効いた具だくさん味噌汁（心身の土台を整え、判断力を高めます）",
+        "旬の青魚やサーモンの塩焼き（良質な巡りを生み、対人運を後押しします）",
+        "シャキシャキ野菜の温サラダ・蒸し野菜（停滞感を払い、軽やかな行動力を呼びます）",
+        "鶏むね肉と根菜の煮物（粘り強さと集中力を養い、仕事の安定運を高めます）",
+        "香り高いほうじ茶と和菓子・ナッツ（緊張を解きほぐし、良い閃きを引き寄せます）",
+        "卵を使った温かい料理・茶碗蒸し（金運と調和のエネルギーを優しくチャージします）",
+        "生姜入りのスープや豚汁（内側から活力を高め、迷いを吹き飛ばします）"
+      ];
+
+      const colors = [
+        { name: "瑠璃紺（ロイヤルブルー）", hex: "#2b4c8c" },
+        { name: "山吹ゴールド", hex: "#e6b422" },
+        { name: "翡翠グリーン", hex: "#2e8b57" },
+        { name: "珊瑚ピンク", hex: "#e07a7a" },
+        { name: "藤パープル", hex: "#7e57c2" },
+        { name: "生成りホワイト", hex: "#f4efe6" },
+        { name: "琥珀オレンジ", hex: "#d97724" }
+      ];
+
+      const directions = [
+        { name: "北東（変化と好転の気）", deg: 45 },
+        { name: "東（発展と新しい情報）", deg: 90 },
+        { name: "南東（良縁と信頼の拡大）", deg: 135 },
+        { name: "南（直感と評価の向上）", deg: 180 },
+        { name: "南西（安定と家庭・基盤運）", deg: 225 },
+        { name: "西（実りと金運の循環）", deg: 270 },
+        { name: "北西（支援と大きな飛躍）", deg: 315 },
+        { name: "北（深い思索と静かな充実）", deg: 0 }
+      ];
+
+      const goodDeeds = [
+        "使う人が気持ちよく使えるよう、共有スペースや洗面台の水滴をさっと拭いておく。",
+        "身近な人や同僚に「いつも助かっています」と具体的な感謝をひと言伝えてみる。",
+        "道端やフロアに落ちている小さなゴミを一つ拾って処分する。",
+        "エレベーターやドアで後ろの人のために数秒だけ押さえて譲ってあげる。",
+        "食事の前に「いただきます」と食材や作ってくれた人へ心の中で感謝を向ける。",
+        "靴やスリッパを揃える・デスクの上を3分だけ整頓して空間に余白を作る。",
+        "相手が話しているときはスマホや作業の手を止め、笑顔でしっかり相槌を打つ。"
+      ];
+
+      const workList = workAdvices[params.occupation] || workAdvices["その他・求職中"];
+      const work = workList[h % workList.length];
+      const food = foods[(h >> 3) % foods.length];
+      const color = colors[(h >> 6) % colors.length];
+      const direction = directions[(h >> 9) % directions.length];
+      const goodDeed = goodDeeds[(h >> 12) % goodDeeds.length];
+
+      return { work, food, color, direction, goodDeed };
+    }
+
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loadingBox = document.getElementById('loadingBox');
+    const resultSection = document.getElementById('resultSection');
+
+    analyzeBtn.addEventListener('click', () => {
+      const targetDate = targetDateInput.value || formatDateISO(new Date());
+      const birthDate = `${yearSel.value}年${monthSel.value}月${daySel.value}日`;
+      const blood = getSelectedValue('bloodGroup');
+      const gender = getSelectedValue('genderGroup');
+      const occupation = document.getElementById('occupation').value;
+      const birthTime = getSelectedValue('birthTimeGroup');
+
+      analyzeBtn.disabled = true;
+      resultSection.style.display = 'none';
+      loadingBox.style.display = 'block';
+
+      setTimeout(() => {
+        const res = generateDeterministicFortune({
+          targetDate, birthDate, blood, gender, occupation, birthTime
+        });
+
+        document.getElementById('resDateLabel').textContent = `${targetDate.replace(/-/g, '/')} の鑑定結果（${blood} / ${birthTime}）`;
+        document.getElementById('resWork').textContent = res.work;
+        document.getElementById('resFood').textContent = res.food;
+        document.getElementById('resColor').textContent = res.color.name;
+        document.getElementById('resColorSwatch').style.backgroundColor = res.color.hex;
+        document.getElementById('resDirection').textContent = res.direction.name;
+        document.getElementById('compassNeedle').style.transform = `rotate(${res.direction.deg}deg)`;
+        document.getElementById('resGoodDeed').textContent = res.goodDeed;
+
+        loadingBox.style.display = 'none';
+        resultSection.style.display = 'block';
+        analyzeBtn.disabled = false;
+        resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 650);
+    });
+
+    // コピー機能
+    document.getElementById('copyBtn').addEventListener('click', () => {
+      const text = [
+        `【AI星詠みパーソナル鑑定】${document.getElementById('resDateLabel').textContent}`,
+        `■ 仕事アドバイス：${document.getElementById('resWork').textContent}`,
+        `■ 開運フード：${document.getElementById('resFood').textContent}`,
+        `■ ラッキーカラー：${document.getElementById('resColor').textContent}`,
+        `■ ラッキー方角：${document.getElementById('resDirection').textContent}`,
+        `■ 一日一膳：${document.getElementById('resGoodDeed').textContent}`
+      ].join('\n');
+
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2400);
+      });
+    });
+
+    // 再鑑定ボタン
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      resultSection.style.display = 'none';
+      document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
